@@ -3,13 +3,9 @@ from datetime import datetime, timedelta
 from eurlex_scraper.storage import save_pdf
 
 target_date = "2025-09-18"
-
 date_object = datetime.strptime(target_date, "%Y-%m-%d")
 next_date = date_object + timedelta(days=1)
-
 next_date_string = next_date.strftime("%Y-%m-%d")
-
-
 url = "https://publications.europa.eu/webapi/rdf/sparql"
 
 
@@ -27,7 +23,6 @@ SELECT DISTINCT
     ?title
 
 WHERE {{
-
     ?work rdf:type cdm:resource_legal .
 
     ?work cdm:work_date_document ?date .
@@ -38,7 +33,6 @@ WHERE {{
     OPTIONAL {{
         ?work cdm:resource_legal_type ?legal_type .
     }}
-
     OPTIONAL {{
         ?work owl:sameAs ?celex .
 
@@ -49,7 +43,6 @@ WHERE {{
             )
         )
     }}
-
     OPTIONAL {{
         ?expression
             cdm:expression_belongs_to_work ?work ;
@@ -57,18 +50,15 @@ WHERE {{
                 <http://publications.europa.eu/resource/authority/language/ENG> ;
             cdm:expression_title ?title .
     }}
-
     FILTER (
         ?date >= "{target_date}"^^xsd:date
         &&
         ?date < "{next_date_string}"^^xsd:date
     )
 }}
-
 ORDER BY ?date
 LIMIT 100
 """
-
 
 response = requests.get(
     url,
@@ -78,12 +68,9 @@ response = requests.get(
     },
     timeout=30
 )
-
-
 print("STATUS:", response.status_code)
 
 data = response.json()
-
 results = data["results"]["bindings"]
 
 if results:
@@ -113,27 +100,9 @@ if results:
     pdf_response.status_code == 200
     and pdf_response.content.startswith(b"%PDF")
     ):
-        title = first_document.get(
-            "title",
-            {}
-        ).get(
-            "value",
-            "document"
-        )
-
-        date = first_document.get(
-            "date",
-            {}
-        ).get(
-            "value"
-        )
-
-        celex = first_document.get(
-            "celex",
-            {}
-        ).get(
-            "value"
-        )
+        title = first_document.get("title", {}).get("value", "document")
+        date = first_document.get("date", {}).get("value")
+        celex = first_document.get("celex", {}).get("value")
 
         save_pdf(
             content=pdf_response.content,
@@ -142,35 +111,13 @@ if results:
             date=date,
             celex=celex
         )
-
 print("LEGAL DOCUMENTS FOUND:", len(results))
-
 
 for document in results:
 
     print("\n-----------------------------")
-
-    print(
-        "WORK:",
-        document.get("work", {}).get("value")
-    )
-
-    print(
-        "DATE:",
-        document.get("date", {}).get("value")
-    )
-
-    print(
-        "LEGAL TYPE:",
-        document.get("legal_type", {}).get("value")
-    )
-
-    print(
-        "CELEX:",
-        document.get("celex", {}).get("value")
-    )
-
-    print(
-        "TITLE:",
-        document.get("title", {}).get("value")
-    )
+    print("WORK:", document.get("work", {}).get("value"))
+    print("DATE:", document.get("date", {}).get("value"))
+    print("LEGAL TYPE:", document.get("legal_type", {}).get("value"))
+    print("CELEX:", document.get("celex", {}).get("value"))
+    print("TITLE:", document.get("title", {}).get("value"))

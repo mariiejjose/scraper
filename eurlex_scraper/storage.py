@@ -3,10 +3,8 @@ import json
 import os
 import re
 
-
 DOWNLOAD_FOLDER = "downloads"
 MANIFEST_FILE = "manifest.json"
-
 
 def load_manifest():
     if not os.path.exists(MANIFEST_FILE):
@@ -25,18 +23,12 @@ def save_manifest(manifest):
             ensure_ascii=False
         )
 
-
 def calculate_hash(content):
     return hashlib.sha256(content).hexdigest()
 
 
 def create_safe_filename(title, file_hash):
-    filename = re.sub(
-        r'[<>:"/\\|?*]',
-        "",
-        title
-    )
-
+    filename = re.sub(r'[<>:"/\\|?*]', "", title)
     filename = filename.strip()
 
     if not filename:
@@ -59,9 +51,7 @@ def save_pdf(
         DOWNLOAD_FOLDER,
         exist_ok=True
     )
-
     manifest = load_manifest()
-
     file_hash = calculate_hash(content)
 
     for document in manifest:
@@ -69,19 +59,13 @@ def save_pdf(
             print(
                 "DUPLICATE: PDF already downloaded"
             )
-
             return "duplicate"
 
-    filename = create_safe_filename(
-        title,
-        file_hash
-    )
-
+    filename = create_safe_filename(title, file_hash)
     file_path = os.path.join(
         DOWNLOAD_FOLDER,
         filename
     )
-
     with open(file_path, "wb") as file:
         file.write(content)
 
@@ -95,12 +79,7 @@ def save_pdf(
             "hash": file_hash
         }
     )
-
     save_manifest(manifest)
-
-    print(
-        "DOWNLOADED:",
-        filename
-    )
+    print("DOWNLOADED:", filename)
 
     return "downloaded"
