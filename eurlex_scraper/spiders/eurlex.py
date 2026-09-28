@@ -1,6 +1,5 @@
 import json
 from datetime import datetime, timedelta
-from urllib.parse import urlencode
 
 import scrapy
 
@@ -44,21 +43,13 @@ class EurLexSpider(scrapy.Spider):
         ).strftime("%Y-%m-%d")
 
         self.sparql_url = sparql_url
-
         self.language = language.upper()
-
         self.seen_works = set()
-
         self.seen_items = set()
-
         self.scanned = 0
-
         self.downloaded = 0
-
         self.duplicates = 0
-
         self.skipped = 0
-
         self.failures = 0
 
 
@@ -66,26 +57,17 @@ class EurLexSpider(scrapy.Spider):
 
         query = self.build_query()
 
-        params = urlencode(
-            {
-                "query": query,
-                "format": "application/sparql-results+json"
-            }
-        )
-
-        request_url = (
-            f"{self.sparql_url}?{params}"
-        )
-
         yield scrapy.Request(
-            url=request_url,
+            url=self.sparql_url,
+            method="POST",
+            body=query.encode("utf-8"),
             callback=self.parse_documents,
             errback=self.handle_failure,
             headers={
+                "Content-Type": "application/sparql-query",
                 "Accept": "application/sparql-results+json"
             }
         )
-
 
     def build_query(self):
 

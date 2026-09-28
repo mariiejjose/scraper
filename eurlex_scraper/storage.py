@@ -30,18 +30,31 @@ def calculate_hash(content):
     return hashlib.sha256(content).hexdigest()
 
 
-def create_safe_filename(title):
-    filename = re.sub(r'[<>:"/\\|?*]', "", title)
+def create_safe_filename(title, file_hash):
+    filename = re.sub(
+        r'[<>:"/\\|?*]',
+        "",
+        title
+    )
 
     filename = filename.strip()
 
-    if len(filename) > 150:
-        filename = filename[:150]
+    if not filename:
+        filename = "document"
 
-    return filename + ".pdf"
+    if len(filename) > 120:
+        filename = filename[:120]
+
+    return f"{filename}_{file_hash[:10]}.pdf"
 
 
-def save_pdf(content, title, work_url, date, celex=None):
+def save_pdf(
+    content,
+    title,
+    work_url,
+    date,
+    celex=None
+):
     os.makedirs(
         DOWNLOAD_FOLDER,
         exist_ok=True
@@ -52,11 +65,17 @@ def save_pdf(content, title, work_url, date, celex=None):
     file_hash = calculate_hash(content)
 
     for document in manifest:
-        if document["hash"] == file_hash:
-            print("DUPLICATE: PDF already downloaded")
+        if document.get("hash") == file_hash:
+            print(
+                "DUPLICATE: PDF already downloaded"
+            )
+
             return "duplicate"
 
-    filename = create_safe_filename(title)
+    filename = create_safe_filename(
+        title,
+        file_hash
+    )
 
     file_path = os.path.join(
         DOWNLOAD_FOLDER,
@@ -66,17 +85,22 @@ def save_pdf(content, title, work_url, date, celex=None):
     with open(file_path, "wb") as file:
         file.write(content)
 
-    manifest.append({
-        "title": title,
-        "date": date,
-        "work": work_url,
-        "celex": celex,
-        "filename": filename,
-        "hash": file_hash
-    })
+    manifest.append(
+        {
+            "title": title,
+            "date": date,
+            "work": work_url,
+            "celex": celex,
+            "filename": filename,
+            "hash": file_hash
+        }
+    )
 
     save_manifest(manifest)
 
-    print("DOWNLOADED:", filename)
+    print(
+        "DOWNLOADED:",
+        filename
+    )
 
     return "downloaded"
