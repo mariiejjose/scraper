@@ -1,0 +1,24 @@
+EUR-Lex PDF Scraper - Sample Run
+
+Command:
+scrapy crawl eurlex -a target_date=2026-09-01 -a "sparql_url=https://publications.europa.eu/webapi/rdf/sparql"
+
+Date run: 2026-09-29
+
+2026-09-29 09:16:09 [scrapy.utils.log] INFO: Scrapy 2.19.0 started (bot: eurlex_scraper)
+2026-09-29 09:16:09 [scrapy.core.engine] INFO: Spider opened
+2026-09-29 09:16:30 [eurlex] INFO: Query returned 1 PDF rows
+2026-09-29 09:16:30 [eurlex] INFO: FOUND PDF: Letter from Frank Elderson, Member of the Executive Board of the European Central Bank (ECB), to Israel Arroyo Martínez, Secretary of State, State Secretariat for Economy and Business Support, regarding a request for an ECB opinion on a draft law on consumer credit agreements and on the amendment of the consolidated text of the general law for the protection of consumers and users and other supplementary laws
+
+DOWNLOADED: Letter from Frank Elderson, Member of the Executive Board of the European Central Bank (ECB), to Israel Arroyo Martínez,_cc591e1f17.pdf
+
+========== RUN SUMMARY ==========
+TARGET DATE: 2026-09-01
+DOCUMENTS SCANNED: 1
+DOWNLOADED: 1
+DUPLICATES: 0
+SKIPPED: 0
+FAILURES: 0
+=================================
+
+2026-09-29 09:16:40 [scrapy.core.engine] INFO: Spider closed (finished)

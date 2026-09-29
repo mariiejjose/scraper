@@ -100,7 +100,6 @@ WHERE {{
     OPTIONAL {{
         ?work cdm:resource_legal_type ?legal_type .
     }}
-
     OPTIONAL {{
         ?work owl:sameAs ?celex .
 
@@ -110,7 +109,6 @@ WHERE {{
                 "/resource/celex/"
             )
         )
-
     }}
     OPTIONAL {{
 
@@ -141,7 +139,6 @@ LIMIT 1000
             "Query returned %s PDF rows",
             len(results)
         )
-
         for document in results:
             work_url = document.get("work", {}).get("value")
 
@@ -150,8 +147,7 @@ LIMIT 1000
             if not work_url or not item_url:
                 self.skipped += 1
                 continue
-
-
+            
             if work_url not in self.seen_works:
                 self.seen_works.add(work_url)
                 self.scanned += 1
@@ -219,7 +215,6 @@ LIMIT 1000
 
         elif result == "duplicate":
             self.duplicates += 1
-
 
     def handle_failure(self, failure):
         self.failures += 1
