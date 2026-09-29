@@ -5,3 +5,4 @@ downloads/
 manifest.json
 .env
 .scrapy/
+.~lock.*#
